@@ -1,0 +1,71 @@
+version: "2"
+
+services:
+
+  haproxy:
+    build: ./haproxy
+    hostname: haproxy
+    domainname: xyzz
+    container_name: haproxy
+    restart: always
+    depends_on:
+      - web0
+      - web1
+    extra_hosts:
+      - "web0:172.119.0.2"
+      - "web1:172.119.0.3"
+    ports:
+      - "80:80"
+      - "443:443"
+      - "9999:9999"
+    networks:
+      - default
+      - proxy
+
+  web0:
+    build: ./web
+    hostname: web0
+    domainname: xyzz
+    container_name: web0
+    extra_hosts:
+      - "haproxy:172.119.0.4"
+      - "web1:172.119.0.3"
+    ports:
+      - "80"
+      - "443"
+    environment:
+      MACHINE: web0
+    restart: always
+    networks:
+      proxy:
+        aliases:
+          - web0
+
+  web1:
+    build: ./web
+    hostname: web1
+    domainname: xyzz
+    container_name: web1
+    extra_hosts:
+      - "haproxy:172.119.0.4"
+      - "web0:172.119.0.2"
+    ports:
+      - "80"
+      - "443"
+    environment:
+      MACHINE: web1
+    restart: always
+    networks:
+      proxy:
+        aliases:
+          - web1
+
+networks:
+  default:
+    driver: bridge
+  proxy:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.119.0.0/16
+          gateway: 172.119.0.1
