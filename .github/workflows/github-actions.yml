@@ -25,6 +25,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Push Haproxy image
+        run: |
           docker tag haproxy:latest ghcr.io/haproxy:$VERSION
           #docker push ghcr.io/haproxy:$VERSION
   
@@ -43,6 +44,7 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Push Webapp image 
+      - name: Push Webapp image
+        run: |
           docker tag webapp:latest ghcr.io/webapp:$VERSION
           #docker push ghcr.io/webapp:$VERSION
