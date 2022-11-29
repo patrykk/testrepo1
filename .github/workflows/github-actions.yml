@@ -1,9 +1,13 @@
-name: Simple App CI
-run-name: ${{ github.actor }} - Simple App CI
+name: Web App CI
+run-name: ${{ github.actor }} - Web App Haproxy CI
 
 on:
-  push: 
-    branches: main
+  push:
+    branches:
+      - develop
+  pull_request:
+    types: 
+      - opened
 
 env:
   VERSION: 1.0
@@ -26,8 +30,8 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Push Haproxy image
         run: |
-          docker tag haproxy:latest ghcr.io/haproxy:$VERSION
-          #docker push ghcr.io/haproxy:$VERSION
+          docker tag haproxy:latest ghcr.io/patrykk/haproxy:${{ env.VERSION }}
+          docker push ghcr.io/patrykk/haproxy:${{ env.VERSION }}
   
   webapp:
     runs-on: ubuntu-latest
@@ -46,5 +50,5 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Push Webapp image
         run: |
-          docker tag webapp:latest ghcr.io/webapp:$VERSION
-          #docker push ghcr.io/webapp:$VERSION
+          docker tag webapp:latest ghcr.io/patrykk/webapp:${{ env.VERSION }}
+          docker push ghcr.io/patrykk/webapp:${{ env.VERSION }}
